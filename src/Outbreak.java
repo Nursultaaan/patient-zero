@@ -10,7 +10,7 @@ public class Outbreak {
      * Choose people to test so that for every link (somebody infected somebody) at least one of the two is tested,
      * and the total cost of testing is as small as possible. cost[v] is the price of testing person v.
      * Returns tested[v] = true if person v is tested.
-     *
+     * <p>
      * State for every person v (looking only at v and everything below it): the smallest cost when v IS tested, and
      * the smallest cost when v is NOT tested. What must then be true about the children of v in each case?
      * Do not forget to rebuild the answer (who exactly is tested), not only the cost: the picture needs it.
@@ -26,7 +26,10 @@ public class Outbreak {
         for (int i = 0; i < order.size(); i++) {
             int v = order.get(i);
             for (int u : nb[v]) {
-                if (parent[u] < 0) { parent[u] = v; order.add(u); }
+                if (parent[u] < 0) {
+                    parent[u] = v;
+                    order.add(u);
+                }
             }
         }
 
@@ -67,7 +70,10 @@ public class Outbreak {
         for (int i = 0; i < order.size(); i++) {
             int v = order.get(i);
             for (int u : nb[v]) {
-                if (parent[u] < 0) { parent[u] = v; order.add(u); }
+                if (parent[u] < 0) {
+                    parent[u] = v;
+                    order.add(u);
+                }
             }
         }
 
@@ -78,9 +84,14 @@ public class Outbreak {
             maxChainValue = Math.max(maxChainValue, top1[v] + top2[v]);
             if (v != 0) {
                 int p = parent[v], len = top1[v] + 1;
-                if (len > top1[p]) { top2[p] = top1[p]; top1[p] = len; }
-                else if (len > top2[p]) { top2[p] = len; }
+                if (len > top1[p]) {
+                    top2[p] = top1[p];
+                    top1[p] = len;
+                } else if (len > top2[p]) {
+                    top2[p] = len;
+                }
             }
         }
         return maxChainValue;
     }
+}
