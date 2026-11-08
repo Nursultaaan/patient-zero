@@ -11,8 +11,15 @@ public class Marker {
      * Example: p = "ACGAC" gives [0, 0, 0, 1, 2]. The last number is the "Border length" line.
      */
     public static int[] prefixFunction(String p) {
-        // TODO Mission 3a
-        return new int[p.length()];
+        int m = p.length();
+        int[] pi = new int[m];
+        int j = 0;
+        for (int i = 1; i < m; i++) {
+            while (j > 0 && p.charAt(i) != p.charAt(j)) j = pi[j - 1];
+            if (p.charAt(i) == p.charAt(j)) j++;
+            pi[i] = j;
+        }
+        return pi;
     }
 
     /**
@@ -22,10 +29,21 @@ public class Marker {
      * the first one is "First hit" (-1 when there is none).
      */
     public static int[] findAll(String text, String p) {
-        // TODO Mission 3b
-        return new int[0];
+        if (p == null || p.isEmpty() || text == null || text.length() < p.length()) return new int[0];
+        int[] pi = prefixFunction(p);
+        List<Integer> matches = new ArrayList<>();
+        int n = text.length(), m = p.length(), j = 0;
+        for (int i = 0; i < n; i++) {
+            while (j > 0 && text.charAt(i) != p.charAt(j)) j = pi[j - 1];
+            if (text.charAt(i) == p.charAt(j)) j++;
+            if (j == m) {
+                matches.add(i - m + 1);
+                j = pi[j - 1];
+            }
+        }
+        return matches.stream().mapToInt(i -> i).toArray();
     }
-
+    
     /**
      * Mission 4. Rabin-Karp. The number of positions i in a such that the word of k letters starting at i
      * (a[i..i+k-1]) also occurs somewhere in b. Count positions, not different words. This is the "Shared words" line.
