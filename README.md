@@ -1,8 +1,8 @@
 # Assignment 4. Patient Zero
 
-Student ID:
-Name:
-Group:
+Student ID: 250846
+Name: Sabidoldanov Nursultan
+Group: SE-2512
 
 This file is the report. Fill it in as you go. How to start: `START_HERE.md`. The task: `docs/Assignment4.pdf`.
 
@@ -10,15 +10,15 @@ This file is the report. Fill it in as you go. How to start: `START_HERE.md`. Th
 
 The 9 lines your program prints on your data (`java -cp out Main`):
 
-    Mutations:
-    Shared core:
-    Marker hits:
-    First hit:
-    Border length:
-    Shared words:
-    Tests needed:
-    Cheapest testing:
-    Longest chain:
+    Mutations: 99
+    Shared core: 1026
+    Marker hits: 6
+    First hit: 6967
+    Border length: 3
+    Shared words: 365
+    Tests needed: 40
+    Cheapest testing: 187
+    Longest chain: 32
 
 My outbreak report (a screenshot of `output/outbreak.html`):
 
@@ -28,19 +28,21 @@ My outbreak report (a screenshot of `output/outbreak.html`):
 
 Answer in your own words, two or three sentences each.
 
-Mission 1. What does the cell d[i][j] of your table mean, and how is it computed from other cells?
+Mission 1. The cell $d[i][j]$ represents the minimum edit distance required to transform the prefix of strain A of length $i$ into the prefix of strain B of length $j$. It is computed by taking the minimum of three values: $d[i-1][j-1]$ plus 0 if the characters match or 1 if they differ (substitution), $d[i-1][j] + 1$ (deletion), and $d[i][j-1] + 1$ (insertion).
 
-Mission 2. How is the longest common subsequence different from the longest common substring? My Shared core is bigger than the number of letters that are the same at the same place: why?
+Mission 2. A longest common subsequence consists of characters that appear in both strains in the same relative order, whereas a longest common substring requires those matching characters to be strictly contiguous. The "Shared core" count is larger than the number of exact character matches at identical index positions because insertions and deletions offset character alignment, allowing non-contiguous matching sequences to be tracked across different positions.
 
-Mission 3. What does the prefix function tell you, and why does the pointer in the text never go back in KMP? What is the Border length of my marker and what does it mean?
+Mission 3. The prefix function $\pi[i]$ indicates the length of the longest proper prefix of the pattern $P[0..i]$ that is also a suffix of $P[0..i]$. In KMP, the text pointer never backtracks because when a mismatch occurs, the prefix function determines how much of the matched prefix can be reused, shifting the pattern forward instead. The "Border length" is the value $\pi[m-1]$ of the marker, which represents the length of the longest proper prefix of the marker that matches its own suffix.
 
-Mission 4. Why must you compare the letters after the hashes are equal? What happens to the cost of Rabin-Karp if many windows have the same hash?
+Mission 4. Character-by-character comparison is necessary after hash values match because different 12-letter sequence windows can produce identical hash values due to hash collisions. If many windows share the same hash value, Rabin-Karp spends excessive time performing full string comparisons for false alarms, causing its time complexity to degrade toward worst-case $O(N \cdot M)$.
 
-Mission 5. What are the two states of a person in your DP, and how do you get the answer for a person from its children? Why does a greedy "test the person with most links first" not always give the cheapest answer?
+Mission 5. The two DP states for a person $u$ are "TESTED" (person $u$ is tested) and "NOT_TESTED" (person $u$ is skipped). If $u$ is not tested, every child of $u$ must be tested to ensure the infection link is covered; if $u$ is tested, each child can independently be chosen as whichever state yields the smaller cost. A greedy strategy of testing the node with the most links fails because testing a high-degree node with an extremely high cost might be far more expensive than testing all of its lower-cost neighbors.
 
 ## AI use
 
 The syllabus requires you to say which AI tools you used and for what. Write the tool (ChatGPT, Copilot, other) and what you asked it: explain an idea, find an error, review code. Write "none" if you did not use any. If you took code or text from a book or a website, give the source here.
+Tool: Gemini
+Usage: Used to explain dynamic programming recurrence relations
 
 ## Timing (Mission 7)
 
@@ -48,9 +50,9 @@ Milliseconds, average of 3 runs, from `java -cp out Bench`.
 
 | test | size | time |
 |---|---|---|
-| naive search | 20 000 / 40 000 / 80 000 | |
-| KMP | 20 000 / 40 000 / 80 000 | |
-| edit distance | 500 / 1000 / 2000 / 4000 | |
+| naive search | 20 000 / 40 000 / 80 000 | 71.8 ms / 132.1 ms / 296.2 ms |
+| KMP | 20 000 / 40 000 / 80 000 | 3.5 ms / 2.1 ms / 0.7 ms |
+| edit distance | 500 / 1000 / 2000 / 4000 | 11.1 ms / 9.8 ms / 26.7 ms / 160.7 ms |
 
 What do the numbers say about how the time grows? When you double the size, by how much does each time grow? Two or three sentences.
 
@@ -60,11 +62,11 @@ n is the length of the text (or of a strain), m the length of the pattern, k the
 
 | algorithm | time | space | assumptions |
 |---|---|---|---|
-| Edit distance | | | |
-| LCS | | | |
-| Prefix function and KMP | | | |
-| Rabin-Karp (shared words) | | | |
-| Tree DP | | | |
+| Edit distance | $O(n_1 \cdot n_2)$ | $O(n_1 \cdot n_2)$ | $n_1, n_2$ are strain lengths |
+| LCS | $O(n_1 \cdot n_2)$ | $O(n_1 \cdot n_2)$ | $n_1, n_2$ are strain lengths |
+| Prefix function and KMP | $O(n + m)$ | $O(m)$ | $n$ is genome length, $m$ is marker length |
+| Rabin-Karp (shared words) | $O(n_1 + n_2)$ average | $O(n_2)$ | Rolling hash with $O(1)$ lookup, low collisions |
+| Tree DP | $O(v)$ | $O(v)$ | $v$ is number of people in the tree |
 
 ## Before you submit
 
