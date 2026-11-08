@@ -43,7 +43,7 @@ public class Marker {
         }
         return matches.stream().mapToInt(i -> i).toArray();
     }
-    
+
     /**
      * Mission 4. Rabin-Karp. The number of positions i in a such that the word of k letters starting at i
      * (a[i..i+k-1]) also occurs somewhere in b. Count positions, not different words. This is the "Shared words" line.
@@ -53,7 +53,42 @@ public class Marker {
      * Example: a = "ACGTAC", b = "TTACGT", k = 4: the words of a are ACGT, CGTA, GTAC; only ACGT is in b, so the answer is 1.
      */
     public static int sharedWords(String a, String b, int k) {
-        // TODO Mission 4
-        return -1;
+        if (a.length() < k || b.length() < k) return 0;
+        long prime = 31, mod = 1_000_000_007L, h = 1;
+        for (int i = 0; i < k - 1; i++) h = (h * prime) % mod;
+
+        Map<Long, List<String>> bHashes = new HashMap<>();
+        long currentHashB = 0;
+        for (int i = 0; i < k; i++) currentHashB = (currentHashB * prime + b.charAt(i)) % mod;
+        bHashes.computeIfAbsent(currentHashB, x -> new ArrayList<>()).add(b.substring(0, k));
+
+        for (int i = 1; i <= b.length() - k; i++) {
+            currentHashB = (currentHashB - (b.charAt(i - 1) * h) % mod + mod) % mod;
+            currentHashB = (currentHashB * prime + b.charAt(i + k - 1)) % mod;
+            bHashes.computeIfAbsent(currentHashB, x -> new ArrayList<>()).add(b.substring(i, i + k));
+        }
+
+        Set<Integer> countedPositions = new HashSet<>();
+        long currentHashA = 0;
+        for (int i = 0; i < k; i++) currentHashA = (currentHashA * prime + a.charAt(i)) % mod;
+
+        if (bHashes.containsKey(currentHashA)) {
+            String window = a.substring(0, k);
+            for (String candidate : bHashes.get(currentHashA)) {
+                if (candidate.equals(window)) { countedPositions.add(0); break; }
+            }
+        }
+
+        for (int i = 1; i <= a.length() - k; i++) {
+            currentHashA = (currentHashA - (a.charAt(i - 1) * h) % mod + mod) % mod;
+            currentHashA = (currentHashA * prime + a.charAt(i + k - 1)) % mod;
+            if (bHashes.containsKey(currentHashA)) {
+                String window = a.substring(i, i + k);
+                for (String candidate : bHashes.get(currentHashA)) {
+                    if (candidate.equals(window)) { countedPositions.add(i); break; }
+                }
+            }
+        }
+        return countedPositions.size();
     }
 }
