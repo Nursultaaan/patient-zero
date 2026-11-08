@@ -55,6 +55,7 @@ Milliseconds, average of 3 runs, from `java -cp out Bench`.
 | edit distance | 500 / 1000 / 2000 / 4000 | 11.1 ms / 9.8 ms / 26.7 ms / 160.7 ms |
 
 What do the numbers say about how the time grows? When you double the size, by how much does each time grow? Two or three sentences.
+For naive search, quadrupling the text size from $20\,000$ to $80\,000$ increases the running time by approximately $4\times$ (from $71.8\text{ ms}$ to $296.2\text{ ms}$), reflecting $O(N \cdot M)$ scaling, whereas KMP maintains minimal execution times regardless of text growth due to its optimal $O(N + M)$ complexity. Edit distance demonstrates quadratic scaling ($O(N^2)$), where doubling the sequence length from $2000$ to $4000$ causes the execution time to jump significantly from $26.7\text{ ms}$ to $160.7\text{ ms}$.
 
 ## Complexity
 
